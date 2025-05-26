@@ -17,6 +17,7 @@ NWP rainfall forecast importer using pysteps utilities. This plugin currently pr
 * KNMI HARMONIE NWP forecasts
 * BoM NWP forecasts
 * RMI NWP forecasts
+* DWD NWP forecasts
 
 
 Installation
