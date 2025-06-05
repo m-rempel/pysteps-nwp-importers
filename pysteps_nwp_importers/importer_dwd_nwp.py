@@ -205,9 +205,7 @@ def _import_dwd_nwp_geodata(grib_msg, valid_times, ens_no, **kwargs):
     # unfortunately projection is hard coded here since projparams does not support unstructured grids
     proj_params = grib_msg.projparams
     if proj_params is None:
-        proj_def = (
-            "+a=6370040.0 +b=6370040.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
-        )
+        proj_def = "+proj=ob_tran +o_proj=latlon +o_lon_p=-170 +o_lat_p=40 +lon_0=180 +R=6371229"
     else:
         proj_def = " ".join([f"+{key}={value} " for key, value in proj_params.items()])
 
