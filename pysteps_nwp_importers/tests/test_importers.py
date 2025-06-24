@@ -7,6 +7,7 @@ import pytest
 from pysteps_nwp_importers.importer_bom_nwp import import_bom_nwp
 from pysteps_nwp_importers.importer_knmi_nwp import import_knmi_nwp
 from pysteps_nwp_importers.importer_rmi_nwp import import_rmi_nwp
+from pysteps_nwp_importers.importer_dwd_nwp import import_dwd_nwp
 from pysteps_nwp_importers.tests.download_test_data import download_test_data
 
 pytest.importorskip("netCDF4")
@@ -355,8 +356,53 @@ def kmni_imported_data():
     )
 
 
+def dwd_imported_data():
+
+    kwargs = {
+        "varname": "PR_GSP",
+        "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
+    }
+    precip_data, _, metadata_nwp = import_dwd_nwp(
+        str(DATA_DIR / "dwd/20250604_1600_PR_GSP_test.grib2"), **kwargs
+    )
+
+    expected_proj = (
+        "+a=6378137.0 +b=6356752.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
+    )
+    expected_shape = (2, 20, 542040)
+    expected_metadata = dict(
+        projection=expected_proj,
+        institution="edzw",
+        transform=None,
+        zerovalue=0.0,
+        threshold=4.76837158203125e-07,
+        unit="kg m-2 s-1",
+        accutime=None,
+        time_stamps=np.array(
+            [
+                "2025-06-04T16:00:00.000000000",
+                "2025-06-04T16:05:00.000000000",
+            ],
+            dtype="datetime64[ns]",
+        ),
+    )
+
+    return ImportedData(
+        data=precip_data,
+        expected_shape=expected_shape,
+        metadata=metadata_nwp,
+        expected_metadata=expected_metadata,
+    )
+
+
 @pytest.fixture(
-    scope="class", params=(rmi_imported_data, bom_imported_data, kmni_imported_data)
+    scope="class",
+    params=(
+        rmi_imported_data,
+        bom_imported_data,
+        kmni_imported_data,
+        dwd_imported_data,
+    ),
 )
 def imported_data(request):
     return request.param()

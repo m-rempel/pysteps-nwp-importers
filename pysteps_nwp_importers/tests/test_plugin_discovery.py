@@ -2,7 +2,12 @@ import pytest
 from pysteps.io import interface
 
 
-new_importers = ["import_bom_nwp", "import_knmi_nwp", "import_rmi_nwp"]
+new_importers = [
+    "import_bom_nwp",
+    "import_knmi_nwp",
+    "import_rmi_nwp",
+    "import_dwd_nwp",
+]
 
 
 @pytest.mark.parametrize("importer_name", new_importers)

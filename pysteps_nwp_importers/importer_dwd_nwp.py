@@ -179,7 +179,7 @@ def import_dwd_nwp(filename, **kwargs):
         )
         da_prec.loc[dict(time=valid_time, ens_no=ens_no)] = grib_msg["values"]
 
-    metadata["time_stamps"] = valid_times
+    metadata["time_stamps"] = da_prec["time"].values
     # unfortunately, threshold values for synthetic reflectivities are hard coded here
     metadata["zerovalue"] = (
         np.nanmin(da_prec) if varname != "DBZCMP_SIM" else -2.0
@@ -206,7 +206,7 @@ def _import_dwd_nwp_geodata(grib_msg, valid_times, ens_no, **kwargs):
     proj_params = grib_msg.projparams
     if proj_params is None:
         proj_def = (
-            "+a=6370040.0 +b=6370040.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
+            "+a=6378137.0 +b=6356752.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
         )
     else:
         proj_def = " ".join([f"+{key}={value} " for key, value in proj_params.items()])
@@ -248,12 +248,13 @@ def _import_dwd_nwp_geodata(grib_msg, valid_times, ens_no, **kwargs):
         ymax = y.max()
         xpixelsize = abs(x[1] - x[0])
         ypixelsize = abs(y[1] - y[0])
+        yorigin = "upper" if grib_msg["orientationOfTheGrid"] < 0 else "lower"
 
         metadata = dict(
             xpixelsize=xpixelsize,
             ypixelsize=ypixelsize,
             cartesian_unit="m",
-            yorigin="lower",  # thats defined in section 3
+            yorigin=yorigin,
             x1=xmin,
             x2=xmax,
             y1=ymin,
@@ -344,8 +345,7 @@ def _read_grid_file(grid_file_path):
     ds = nc.Dataset(grid_file_path)
 
     # center lon and lat of the triangles
-    # -1 since these are fortran-like indices
-    clon = ds.variables["clon"][:] - 1
-    clat = ds.variables["clat"][:] - 1
+    clon = np.rad2deg(ds.variables["clon"][:])
+    clat = np.rad2deg(ds.variables["clat"][:])
 
     return clon, clat
