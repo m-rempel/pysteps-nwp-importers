@@ -363,25 +363,36 @@ def dwd_imported_data():
         "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
     }
     precip_data, _, metadata_nwp = import_dwd_nwp(
-        str(DATA_DIR / "dwd/20250604_1600_PR_GSP_test.grib2"), **kwargs
+        str(DATA_DIR / "dwd/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
     )
 
     expected_proj = (
         "+a=6378137.0 +b=6356752.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
     )
-    expected_shape = (2, 20, 542040)
+    expected_shape = (13, 20, 542040)
     expected_metadata = dict(
         projection=expected_proj,
         institution="edzw",
         transform=None,
         zerovalue=0.0,
-        threshold=4.76837158203125e-07,
+        threshold=0.0,
         unit="kg m-2 s-1",
         accutime=None,
         time_stamps=np.array(
             [
-                "2025-06-04T16:00:00.000000000",
-                "2025-06-04T16:05:00.000000000",
+                "2025-06-04T17:00:00.000000000",
+                "2025-06-04T17:05:00.000000000",
+                "2025-06-04T17:10:00.000000000",
+                "2025-06-04T17:15:00.000000000",
+                "2025-06-04T17:20:00.000000000",
+                "2025-06-04T17:25:00.000000000",
+                "2025-06-04T17:30:00.000000000",
+                "2025-06-04T17:35:00.000000000",
+                "2025-06-04T17:40:00.000000000",
+                "2025-06-04T17:45:00.000000000",
+                "2025-06-04T17:50:00.000000000",
+                "2025-06-04T17:55:00.000000000",
+                "2025-06-04T18:00:00.000000000",
             ],
             dtype="datetime64[ns]",
         ),
