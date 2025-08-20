@@ -3,7 +3,7 @@ pysteps_nwp_importers.importer_dwd_nwp
 ====================
 
 Module to import the DWD ICON-RUC NWP forecasts. The output of this method
-is a xarray containing the desired precipitation related variable per
+is an xarray DataArray containing the desired precipitation related variable per
 timestep as well as the metadata as a dictionary.
 
 The description of the metadata has to divide in two categories since
