@@ -1,13 +1,16 @@
 from collections import namedtuple, defaultdict
 from pathlib import Path
 
+import os
+import datetime
 import numpy as np
+import pysteps
 import pytest
 
 from pysteps_nwp_importers.importer_bom_nwp import import_bom_nwp
 from pysteps_nwp_importers.importer_knmi_nwp import import_knmi_nwp
 from pysteps_nwp_importers.importer_rmi_nwp import import_rmi_nwp
-from pysteps_nwp_importers.importer_dwd_nwp import import_dwd_nwp
+from pysteps_nwp_importers.importer_dwd_nwp import import_dwd_nwp, unstructured2regular
 from pysteps_nwp_importers.tests.download_test_data import download_test_data
 
 pytest.importorskip("netCDF4")
@@ -404,6 +407,86 @@ def dwd_imported_data():
         metadata=metadata_nwp,
         expected_metadata=expected_metadata,
     )
+
+
+metadata_dst = {
+    "projection": "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=10 +a=6378137 +b=6356752.3142451802 +no_defs +x_0=543196.83521776402 +y_0=3622588.8619310018 +units=m",
+    "ll_lon": np.float64(3.566994635),
+    "ll_lat": np.float64(45.69642538),
+    "ur_lon": np.float64(18.73161645),
+    "ur_lat": np.float64(55.84543856),
+    "x1": -500.0,
+    "y1": -1199500.0,
+    "x2": 1099500.0,
+    "y2": 500.0,
+    "xpixelsize": np.float64(1000.0),
+    "ypixelsize": np.float64(1000.0),
+    "cartesian_unit": "m",
+    "yorigin": "upper",
+    "institution": "ORG:78,CTY:616,CMT:Deutscher Wetterdienst radolan@dwd.de",
+    "accutime": 5.0,
+    "unit": "mm/h",
+    "transform": None,
+    "zerovalue": np.float64(0.0),
+    "threshold": np.float64(0.12),
+    "timestamps": np.array(
+        [
+            datetime.datetime(2025, 6, 4, 17, 0),
+        ],
+        dtype=object,
+    ),
+}
+
+kwargs = {
+    "varname": "PR_GSP",
+    "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
+}
+array_src, _, metadata_src = import_dwd_nwp(
+    str(DATA_DIR / "dwd/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
+)
+
+# Since output of NWP importer is based on xarray and the restructure function is
+# rewritten for np.ndarray, there's is some improvisation
+metadata_src["clon"] = array_src["longitude"].values
+metadata_src["clat"] = array_src["latitude"].values
+array_src = array_src.values
+
+restructure_arg_names = ("array_src", "metadata_src", "metadata_dst")
+restructure_arg_values = [(array_src, metadata_src, metadata_dst)]
+
+
+@pytest.mark.parametrize(restructure_arg_names, restructure_arg_values)
+def test_utils_unstructured2regular(array_src, metadata_src, metadata_dst):
+    # Run unstructured2regular
+    array_rprj, metadata_rprj = unstructured2regular(
+        array_src, metadata_src, metadata_dst
+    )
+
+    # The tests
+    assert (
+        array_rprj.shape[0] == array_src.shape[0]
+    ), "Time dimension has not the same length as source"
+    assert (
+        array_rprj.shape[1] == array_src.shape[0],
+        "Ensemble member dimension has not the same length as source",
+    )
+
+    assert (
+        metadata_rprj["x1"] == metadata_dst["x1"]
+    ), "x-value lower left corner is not equal to radar composite"
+    assert (
+        metadata_rprj["x2"] == metadata_dst["x2"]
+    ), "x-value upper right corner is not equal to radar composite"
+    assert (
+        metadata_rprj["y1"] == metadata_dst["y1"]
+    ), "y-value lower left corner is not equal to radar composite"
+    assert (
+        metadata_rprj["y2"] == metadata_dst["y2"]
+    ), "y-value upper right corner is not equal to radar composite"
+
+    assert (
+        metadata_rprj["projection"] == metadata_dst["projection"]
+    ), "projection is different than destination projection"
 
 
 @pytest.fixture(
