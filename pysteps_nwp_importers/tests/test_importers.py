@@ -93,9 +93,7 @@ def bom_imported_data():
     precip_data, _, metadata_nwp = import_bom_nwp(
         str(DATA_DIR / "bom/20201031_0000_regrid_short.nc")
     )
-    expected_proj = (
-        "+proj=aea  +lon_0=153.240 +lat_0=-27.718 +lat_1=-26.200 +lat_2=-29.300"
-    )
+    expected_proj = "+proj=aea  +lon_0=153.240 +lat_0=-27.718 +lat_1=-26.200 +lat_2=-29.300"
     expected_shape = (144, 512, 512)
     expected_metadata = dict(
         projection=expected_proj,
@@ -369,9 +367,7 @@ def dwd_imported_data():
         str(DATA_DIR / "dwd/2025/06/04/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
     )
 
-    expected_proj = (
-        "+a=6378137.0 +b=6356752.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
-    )
+    expected_proj = "+a=6378137.0 +b=6356752.0 +proj=stere +lat_ts=60.0 +lat_0=90.0 +lon_0=10.0"
     expected_shape = (13, 20, 542040)
     expected_metadata = dict(
         projection=expected_proj,
@@ -458,19 +454,15 @@ restructure_arg_values = [(array_src, metadata_src, metadata_dst)]
 @pytest.mark.parametrize(restructure_arg_names, restructure_arg_values)
 def test_utils_unstructured2regular(array_src, metadata_src, metadata_dst):
     # Run unstructured2regular
-    array_rprj, metadata_rprj = unstructured2regular(
-        array_src, metadata_src, metadata_dst
-    )
+    array_rprj, metadata_rprj = unstructured2regular(array_src, metadata_src, metadata_dst)
 
     # The tests
     assert (
         array_rprj.shape[0] == array_src.shape[0]
     ), "Time dimension has not the same length as source"
     assert (
-        array_rprj.shape[1] == array_src.shape[0],
-        "Ensemble member dimension has not the same length as source",
-    )
-
+        array_rprj.shape[1] == array_src.shape[0]
+    ), "Ensemble member dimension has not the same length as source"
     assert (
         metadata_rprj["x1"] == metadata_dst["x1"]
     ), "x-value lower left corner is not equal to radar composite"
