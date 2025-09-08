@@ -442,7 +442,7 @@ kwargs = {
     "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
 }
 array_src, _, metadata_src = import_dwd_nwp(
-    str(DATA_DIR / "dwd/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
+    str(DATA_DIR / "dwd/2025/06/04/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
 )
 
 # Since output of NWP importer is based on xarray and the restructure function is
