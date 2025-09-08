@@ -393,7 +393,7 @@ def _import_dwd_nwp_geodata(grib_msg, valid_times, ens_no, **kwargs):
     units = None
     if "units" in grib_msg.keys():
         units = grib_msg["units"]
-        if units in ("kg m-2", "mm"):
+        if units in ("kg m-2", "mm", "kg m**-2 s**-1"):
             units = "mm"
 
     # For the rotated lat/lon grid the projection definition is extracted from

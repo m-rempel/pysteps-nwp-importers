@@ -385,7 +385,7 @@ def dwd_imported_data():
         transform=None,
         zerovalue=0.0,
         threshold=0.0,
-        unit="kg m-2 s-1",
+        unit="mm",
         accutime=None,
         time_stamps=np.array(
             [
