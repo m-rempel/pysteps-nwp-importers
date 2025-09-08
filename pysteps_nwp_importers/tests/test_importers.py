@@ -366,7 +366,7 @@ def dwd_imported_data():
         "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
     }
     precip_data, _, metadata_nwp = import_dwd_nwp(
-        str(DATA_DIR / "dwd/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
+        str(DATA_DIR / "dwd/2025/06/04/20250604_1600_PR_GSP_060_120.grib2"), **kwargs
     )
 
     expected_proj = (
