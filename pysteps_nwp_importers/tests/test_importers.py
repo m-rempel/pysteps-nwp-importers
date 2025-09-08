@@ -480,7 +480,7 @@ def test_utils_unstructured2regular(array_src, metadata_src, metadata_dst):
         array_rprj.shape[0] == array_src.shape[0]
     ), "Time dimension has not the same length as source"
     assert (
-        array_rprj.shape[1] == array_src.shape[0]
+        array_rprj.shape[1] == array_src.shape[1]
     ), "Ensemble member dimension has not the same length as source"
     assert (
         metadata_rprj["x1"] == metadata_dst["x1"]
