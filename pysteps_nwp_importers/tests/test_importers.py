@@ -363,7 +363,7 @@ def dwd_imported_data():
 
     kwargs = {
         "varname": "lsprate",
-        "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
+        "grid_file_path": str(DATA_DIR / "grid_files/icon_grid_0047_R19B07_L.nc"),
     }
     try:
         precip_data, _, metadata_nwp = import_dwd_nwp(
@@ -445,7 +445,7 @@ metadata_dst = {
 
 kwargs = {
     "varname": "lsprate",
-    "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
+    "grid_file_path": str(DATA_DIR / "grid_files/icon_grid_0047_R19B07_L.nc"),
 }
 
 try:
