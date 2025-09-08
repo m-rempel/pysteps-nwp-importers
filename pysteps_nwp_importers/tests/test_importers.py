@@ -360,7 +360,7 @@ def kmni_imported_data():
 def dwd_imported_data():
 
     kwargs = {
-        "varname": "PR_GSP",
+        "varname": "lsprate",
         "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
     }
     precip_data, _, metadata_nwp = import_dwd_nwp(
@@ -434,7 +434,7 @@ metadata_dst = {
 }
 
 kwargs = {
-    "varname": "PR_GSP",
+    "varname": "lsprate",
     "grid_file_path": str(DATA_DIR / "dwd/icon_grid_0047_R19B07_L.nc"),
 }
 array_src, _, metadata_src = import_dwd_nwp(
