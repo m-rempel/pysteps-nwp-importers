@@ -209,6 +209,12 @@ def import_dwd_nwp(filename, **kwargs):
     da_prec, metadata = _import_dwd_nwp_geodata(
         grib_msgs[0], valid_times, ens_no, **kwargs
     )
+    if metadata["unit"] == "kg m**-2 s**-1":
+        da_prec = da_prec * 300
+        metadata["unit"] = "mm"
+
+    # The no data is set to 9999.0, change it to nan.
+    da_prec = da_prec.where(da_prec != 9999, np.nan)
 
     # Fill DataArray with values of the grib messages by ensemble member and forecast
     # time
@@ -393,7 +399,7 @@ def _import_dwd_nwp_geodata(grib_msg, valid_times, ens_no, **kwargs):
     units = None
     if "units" in grib_msg.keys():
         units = grib_msg["units"]
-        if units in ("kg m-2", "mm", "kg m**-2 s**-1"):
+        if units in ("kg m-2", "mm"):
             units = "mm"
 
     # For the rotated lat/lon grid the projection definition is extracted from
