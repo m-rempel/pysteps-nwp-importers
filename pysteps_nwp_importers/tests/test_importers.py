@@ -360,6 +360,7 @@ def kmni_imported_data():
 
 
 def dwd_imported_data():
+    pytest.importorskip("pygrib")
 
     kwargs = {
         "varname": "lsprate",
@@ -470,6 +471,7 @@ restructure_arg_values = [(array_src, metadata_src, metadata_dst)]
 
 @pytest.mark.parametrize(restructure_arg_names, restructure_arg_values)
 def test_utils_unstructured2regular(array_src, metadata_src, metadata_dst):
+    pytest.importorskip("pygrib")
     # Run unstructured2regular
     array_rprj, metadata_rprj = unstructured2regular(
         array_src, metadata_src, metadata_dst

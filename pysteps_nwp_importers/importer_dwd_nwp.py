@@ -87,7 +87,6 @@ try:
 except ImportError:
     PYGRIB_IMPORTED = False
 
-
 try:
     import pyproj
 
@@ -136,6 +135,12 @@ def import_dwd_nwp(filename, **kwargs):
     if not PYGRIB_IMPORTED:
         raise MissingOptionalDependency(
             "pygrib package is required to import DWD NWP precipitation "
+            "forecasts but it is not installed"
+        )
+
+    if not PYPROJ_IMPORTED:
+        raise MissingOptionalDependency(
+            "pyproj package is required to import DWD NWP precipitation "
             "forecasts but it is not installed"
         )
 
@@ -209,12 +214,6 @@ def import_dwd_nwp(filename, **kwargs):
     da_prec, metadata = _import_dwd_nwp_geodata(
         grib_msgs[0], valid_times, ens_no, **kwargs
     )
-    if metadata["unit"] == "kg m**-2 s**-1":
-        da_prec = da_prec * 300
-        metadata["unit"] = "mm"
-
-    # The no data is set to 9999.0, change it to nan.
-    da_prec = da_prec.where(da_prec != 9999, np.nan)
 
     # Fill DataArray with values of the grib messages by ensemble member and forecast
     # time
@@ -226,6 +225,14 @@ def import_dwd_nwp(filename, **kwargs):
             else "0"
         )
         da_prec.loc[dict(time=valid_time, ens_no=ens_no)] = grib_msg["values"]
+
+    # Finally, adjust the units if unit is kg m**-2 s**-1
+    if metadata["unit"] == "kg m**-2 s**-1":
+        da_prec = da_prec * 300
+        metadata["unit"] = "mm"
+
+    # The no data is set to 9999.0, change it to nan.
+    da_prec = da_prec.where(da_prec < 9999, np.nan)
 
     # Set forecast times additionally in the metadate
     metadata["time_stamps"] = da_prec["time"].values

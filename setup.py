@@ -5,8 +5,6 @@ with open("README.rst") as readme_file:
 
 requirements = [
     "numpy",
-    "pygrib",
-    "pyproj",
     "xarray",
     "dask",
     "netCDF4",

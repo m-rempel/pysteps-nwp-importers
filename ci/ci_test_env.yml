@@ -10,5 +10,7 @@ dependencies:
   - netCDF4
   - dask
   - xarray
+  # Optional dependencies
+  - pygrib
   # Test dependencies
   - pytest

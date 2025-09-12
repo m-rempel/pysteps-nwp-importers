@@ -8,8 +8,6 @@ tox
 coverage
 Sphinx
 numpy
-pygrib
-pyproj
 xarray
 netCDF4
 pysteps>=1.4,<2.0
